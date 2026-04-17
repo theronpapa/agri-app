@@ -67,18 +67,20 @@ Respond in this exact JSON format:
     })
   });
 
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Claude API ${res.status}: ${errText.slice(0, 200)}`);
+  }
+
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || 'Claude API error');
 
   const text = data.content?.[0]?.text || '';
 
-  // Parse JSON from response
   let parsed;
   try {
-    // Try direct JSON parse first
     parsed = JSON.parse(text);
   } catch {
-    // Try extracting JSON from text
     const match = text.match(/\{[\s\S]*"subject"[\s\S]*"body"[\s\S]*\}/);
     if (match) parsed = JSON.parse(match[0]);
     else parsed = { subject: `Exhibitor Invitation: ${EVENT.name} — ${Company}`, body: text };
@@ -94,7 +96,6 @@ Respond in this exact JSON format:
   };
 }
 
-// Fallback template generator (used when no Claude API key)
 function generateTemplate(contact) {
   const { Name, Company, Email, Category, Location } = contact;
   const firstName = Name ? Name.split(' ')[0] : 'Sir/Madam';
@@ -126,6 +127,31 @@ ${EVENT.name} Organizing Committee`;
   return { to: Email, subject, body, company: Company, name: Name, category: Category };
 }
 
+// Process AI calls in parallel batches of 5
+async function generateBatchAI(contacts) {
+  const BATCH_SIZE = 5;
+  const emails = [];
+  const errors = [];
+
+  for (let i = 0; i < contacts.length; i += BATCH_SIZE) {
+    const batch = contacts.slice(i, i + BATCH_SIZE);
+    const results = await Promise.allSettled(
+      batch.map(c => generateWithAI(c))
+    );
+
+    for (let j = 0; j < results.length; j++) {
+      if (results[j].status === 'fulfilled') {
+        emails.push(results[j].value);
+      } else {
+        errors.push({ company: batch[j].Company, error: results[j].reason?.message || 'Unknown error' });
+        emails.push(generateTemplate(batch[j]));
+      }
+    }
+  }
+
+  return { emails, errors };
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -139,29 +165,28 @@ module.exports = async function handler(req, res) {
       const { contacts } = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
       if (!contacts || !contacts.length) return res.status(400).json({ error: 'No contacts provided' });
 
+      // Cap at 15 contacts per request to stay within Vercel timeout
+      const batch = contacts.slice(0, 15);
       const useAI = !!CLAUDE_KEY;
-      const emails = [];
-      const errors = [];
 
-      // Process contacts — AI one at a time, templates in batch
+      let emails, errors;
       if (useAI) {
-        for (const c of contacts) {
-          try {
-            const email = await generateWithAI(c);
-            emails.push(email);
-          } catch (e) {
-            // Fall back to template for this one
-            errors.push({ company: c.Company, error: e.message });
-            emails.push(generateTemplate(c));
-          }
-        }
+        const result = await generateBatchAI(batch);
+        emails = result.emails;
+        errors = result.errors;
       } else {
-        for (const c of contacts) {
-          emails.push(generateTemplate(c));
-        }
+        emails = batch.map(c => generateTemplate(c));
+        errors = [];
       }
 
-      return res.json({ emails, count: emails.length, ai: useAI, errors: errors.length ? errors : undefined });
+      return res.json({
+        emails,
+        count: emails.length,
+        total: contacts.length,
+        processed: batch.length,
+        ai: useAI,
+        errors: errors.length ? errors : undefined
+      });
     }
 
     if (action === 'send') {
@@ -238,7 +263,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (action === 'check') {
-      // Check if AI is available
       return res.json({ ai: !!CLAUDE_KEY, gmail: !!MATON_KEY });
     }
 
