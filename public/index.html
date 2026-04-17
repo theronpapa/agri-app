@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriMalaysia 2026 - Exhibition Manager</title>
+<style>
+:root{--bg:#0a0f1a;--card:#111827;--card2:#1a2332;--bdr:#1e2d3d;--pri:#10b981;--prh:#34d399;--acc:#3b82f6;--dan:#ef4444;--wrn:#f59e0b;--txt:#e5e7eb;--dim:#6b7280;--wht:#fff;--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+.lw{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+.lb{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:40px;width:100%;max-width:400px;text-align:center}
+.lb h1{font-size:28px;color:var(--pri);margin-bottom:4px}
+.lb .sub{color:var(--dim);font-size:14px;margin-bottom:30px}
+.badge-ev{display:inline-block;background:var(--pri);color:#000;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:20px}
+.fg{margin-bottom:16px;text-align:left}
+.fg label{display:block;font-size:12px;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fg select,.fg input,.fg textarea{width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:14px;outline:none}
+.fg select:focus,.fg input:focus,.fg textarea:focus{border-color:var(--pri)}
+.fg textarea{resize:vertical;min-height:100px;font-family:inherit;line-height:1.5}
+.lbtn{width:100%;padding:14px;background:var(--pri);color:#000;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+.lbtn:hover{background:var(--prh)}
+.lerr{color:var(--dan);font-size:13px;margin-top:12px;display:none}
+.pw{color:var(--dim);font-size:11px;margin-top:20px}
+.app{display:none}
+.side{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--card);border-right:1px solid var(--bdr);padding:16px 0;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
+.sbr{padding:0 16px 16px;border-bottom:1px solid var(--bdr);margin-bottom:8px}
+.sbr h2{color:var(--pri);font-size:16px}
+.sbr p{color:var(--dim);font-size:10px;margin-top:2px}
+.ni{display:flex;align-items:center;gap:8px;padding:10px 16px;color:var(--dim);cursor:pointer;font-size:13px;transition:all .2s;border-left:3px solid transparent}
+.ni:hover{color:var(--txt);background:var(--card2)}
+.ni.act{color:var(--pri);background:rgba(16,185,129,.08);border-left-color:var(--pri)}
+.ni .ic{font-size:16px;width:20px;text-align:center}
+.sf{margin-top:auto;padding:12px 16px;border-top:1px solid var(--bdr)}
+.ui{display:flex;align-items:center;gap:8px}
+.ua{width:28px;height:28px;border-radius:50%;background:var(--pri);display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:12px}
+.un{font-size:12px}.ur{font-size:10px;color:var(--dim)}
+.lo{margin-top:8px;width:100%;padding:6px;background:var(--card2);border:1px solid var(--bdr);border-radius:6px;color:var(--dim);font-size:11px;cursor:pointer}
+.lo:hover{color:var(--dan);border-color:var(--dan)}
+.mn{margin-left:220px;padding:20px;min-height:100vh}
+.pg{display:none}.pg.act{display:block}
+.ph{margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.ph h1{font-size:22px;color:var(--wht)}
+.ph p{color:var(--dim);font-size:13px;margin-top:2px}
+.rfr{padding:6px 14px;background:var(--card2);border:1px solid var(--bdr);border-radius:8px;color:var(--dim);font-size:12px;cursor:pointer}
+.rfr:hover{color:var(--pri);border-color:var(--pri)}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px}
+.sc .sl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.sc .sv{font-size:26px;font-weight:700;margin-top:4px}
+.sc .ss{font-size:11px;color:var(--dim);margin-top:4px}
+.grn{color:var(--pri)}.blu{color:var(--acc)}.ylw{color:var(--wrn)}.red{color:var(--dan)}
+.tc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.tt{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--bdr);gap:10px;flex-wrap:wrap}
+.si{padding:7px 12px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;outline:none;min-width:180px}
+.si:focus{border-color:var(--pri)}
+.fs{padding:7px 10px;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-size:12px;outline:none}
+.btn{padding:7px 14px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.bp{background:var(--pri);color:#000}.bp:hover{background:var(--prh)}
+.bd{background:var(--dan);color:#fff}
+.bs{padding:4px 8px;font-size:11px}
+.ba{background:var(--acc);color:#fff}
+.bw{background:var(--wrn);color:#000}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 14px;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--bdr);background:var(--card2)}
+td{padding:10px 14px;font-size:12px;border-bottom:1px solid var(--bdr);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.02)}
+.bdg{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bdg-g{background:rgba(16,185,129,.15);color:#34d399}
+.bdg-b{background:rgba(59,130,246,.15);color:#60a5fa}
+.bdg-y{background:rgba(245,158,11,.15);color:#fbbf24}
+.bdg-r{background:rgba(239,68,68,.15);color:#f87171}
+.bdg-gr{background:rgba(107,114,128,.15);color:#9ca3af}
+.tf{padding:10px 16px;color:var(--dim);font-size:11px}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;justify-content:center;align-items:center}
+.mo.show{display:flex}
+.ml{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:24px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.ml h2{font-size:16px;margin-bottom:16px;color:var(--wht)}
+.ml .fg{margin-bottom:12px}
+.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.bc{background:var(--card2);color:var(--dim);border:1px solid var(--bdr)}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.bcell{background:var(--card);border:2px solid var(--bdr);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;min-height:80px;display:flex;flex-direction:column;justify-content:center}
+.bcell:hover{border-color:var(--pri);transform:translateY(-2px)}
+.bcell.avail{border-color:var(--pri);background:rgba(16,185,129,.05)}
+.bcell.bkd{border-color:var(--acc);background:rgba(59,130,246,.08)}
+.bcell.prem{border-color:var(--wrn);background:rgba(245,158,11,.08)}
+.bid{font-weight:700;font-size:14px;color:var(--wht)}
+.bsz{font-size:10px;color:var(--dim);margin-top:2px}
+.bco{font-size:10px;color:var(--pri);margin-top:4px;font-weight:600;word-break:break-word}
+.ful{display:flex;flex-direction:column;gap:10px}
+.fuc{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.fui h3{font-size:13px;color:var(--wht)}.fui p{font-size:11px;color:var(--dim);margin-top:2px}
+.tli{display:flex;gap:14px;padding-bottom:16px;position:relative}
+.tli::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--bdr)}
+.tli:last-child::before{display:none}
+.tld{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;background:var(--card2);border:2px solid var(--acc)}
+.tlc h4{font-size:12px;color:var(--wht)}.tlc p{font-size:11px;color:var(--dim);margin-top:2px}
+.loading{text-align:center;padding:40px;color:var(--dim)}
+.bar-wrap{margin-bottom:6px}
+.bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px}
+.bar-bg{background:var(--bg);border-radius:4px;height:6px}
+.bar-fg{height:100%;border-radius:4px}
+/* Email compose */
+.eml-prev{background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:14px;margin:10px 0;font-size:12px;line-height:1.6;max-height:300px;overflow-y:auto;white-space:pre-wrap;word-wrap:break-word}
+.eml-prev .eml-to{color:var(--acc);font-weight:600}
+.eml-prev .eml-sub{color:var(--wrn);font-weight:600}
+.eml-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.eml-card h3{font-size:13px;color:var(--wht);margin-bottom:4px}
+.eml-card .eml-meta{font-size:11px;color:var(--dim);margin-bottom:8px}
+.eml-card .eml-body{font-size:12px;line-height:1.5;color:var(--txt);max-height:150px;overflow-y:auto;white-space:pre-wrap;word-wrap:break-word}
+.eml-card .eml-acts{margin-top:10px;display:flex;gap:6px}
+.ck{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--txt);padding:4px 0}
+.ck input{accent-color:var(--pri);width:14px;height:14px}
+.sel-grid{display:grid;grid-template-columns:1fr;gap:4px;max-height:250px;overflow-y:auto;padding:4px 0}
+.sel-row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:12px}
+.sel-row:hover{background:var(--card2)}
+.sel-row .sr-co{font-weight:600;color:var(--wht);min-width:140px}
+.sel-row .sr-cat{color:var(--dim);font-size:10px}
+.cnt-sel{font-size:12px;color:var(--pri);font-weight:600}
+.tab-bar{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:16px}
+.tab-btn{padding:10px 20px;font-size:13px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--txt)}
+.tab-btn.act{color:var(--pri);border-bottom-color:var(--pri)}
+.tab-pg{display:none}.tab-pg.act{display:block}
+@media(max-width:768px){.side{width:56px}.sbr h2,.sbr p,.ni span:not(.ic),.sf .un,.sf .ur,.lo{display:none}.ni{justify-content:center;padding:10px}.mn{margin-left:56px;padding:12px}.sg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="lw" id="LS">
+<div class="lb">
+<div class="badge-ev">10-12 SEPT 2026 | MITEC KL</div>
+<h1>AgriMalaysia 2026</h1>
+<p class="sub">Exhibition Management Dashboard</p>
+<div class="fg"><label>Admin</label><select id="lU"><option value="">Select admin...</option><option value="derek">Derek</option><option value="hqpapa">HQ Papa</option></select></div>
+<div class="fg"><label>Password</label><input type="password" id="lP" placeholder="Enter password..."></div>
+<button class="lbtn" id="lB">Sign In</button>
+<div class="lerr" id="lE"></div>
+<p class="pw">Powered by MiffitouTech</p>
+</div>
+</div>
+
+<div class="app" id="app">
+<div class="side">
+<div class="sbr"><h2>AgriMalaysia</h2><p>Exhibition Manager</p></div>
+<div class="ni act" data-p="dash"><span class="ic">📊</span><span>Dashboard</span></div>
+<div class="ni" data-p="contacts"><span class="ic">👥</span><span>Contacts</span></div>
+<div class="ni" data-p="pipeline"><span class="ic">🔄</span><span>Pipeline</span></div>
+<div class="ni" data-p="emails"><span class="ic">📧</span><span>Email Outreach</span></div>
+<div class="ni" data-p="booths"><span class="ic">🏢</span><span>Booth Map</span></div>
+<div class="ni" data-p="followups"><span class="ic">📅</span><span>Follow-ups</span></div>
+<div class="ni" data-p="activity"><span class="ic">📝</span><span>Activity Log</span></div>
+<div class="sf">
+<div class="ui"><div class="ua" id="uA">D</div><div><div class="un" id="uN">Derek</div><div class="ur">Admin</div></div></div>
+<button class="lo" id="loB">Sign Out</button>
+</div>
+</div>
+<div class="mn">
+
+<!-- DASHBOARD -->
+<div class="pg act" id="pg-dash">
+<div class="ph"><div><h1>Dashboard</h1><p>AgriMalaysia 2026 - Overview</p></div><button class="rfr" id="dashR">Refresh Data</button></div>
+<div class="sg">
+<div class="sc"><div class="sl">Total Contacts</div><div class="sv grn" id="dC">-</div><div class="ss">Companies in database</div></div>
+<div class="sc"><div class="sl">Emails Sent</div><div class="sv blu" id="dS">-</div><div class="ss">Via Instantly + Gmail</div></div>
+<div class="sc"><div class="sl">Replies</div><div class="sv ylw" id="dR">-</div><div class="ss">Responses received</div></div>
+<div class="sc"><div class="sl">Booths Booked</div><div class="sv grn" id="dB">-</div><div class="ss" id="dBs">of 60 available</div></div>
+<div class="sc"><div class="sl">Pending Follow-ups</div><div class="sv red" id="dF">-</div><div class="ss">Need attention</div></div>
+<div class="sc"><div class="sl">Days Until Event</div><div class="sv ylw" id="dD">-</div><div class="ss">10-12 Sept 2026</div></div>
+</div>
+<div class="sg">
+<div class="sc" style="grid-column:span 2"><div class="sl" style="margin-bottom:10px">Contacts by Category</div><div id="catB"></div></div>
+<div class="sc" style="grid-column:span 2"><div class="sl" style="margin-bottom:10px">Email Funnel</div><div id="emF"></div></div>
+</div>
+<div class="tc"><div class="tt"><strong>Recent Activity</strong></div><table><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody id="rAct"></tbody></table></div>
+</div>
+
+<!-- CONTACTS -->
+<div class="pg" id="pg-contacts">
+<div class="ph"><div><h1>Contacts</h1><p>Companies loaded from Google Sheet</p></div><button class="rfr" id="conR">Refresh</button></div>
+<div class="tc">
+<div class="tt">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<input class="si" id="cSr" placeholder="Search...">
+<select class="fs" id="cCf"><option value="">All Categories</option></select>
+<select class="fs" id="cLf"><option value="">All Locations</option></select>
+<select class="fs" id="cSf"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Confirmed</option><option>Not Interested</option></select>
+</div>
+<div style="display:flex;gap:6px">
+<button class="btn bp" id="csvI">Import CSV</button><input type="file" id="csvF" accept=".csv" style="display:none">
+<button class="btn bp" id="csvE">Export</button>
+<button class="btn bp" id="addC">+ Add</button>
+</div>
+</div>
+<div style="overflow-x:auto"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Category</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead><tbody id="cTb"></tbody></table></div>
+<div class="tf" id="cCt">Loading...</div>
+</div>
+</div>
+
+<!-- EMAILS -->
+<div class="pg" id="pg-emails">
+<div class="ph"><div><h1>Email Outreach</h1><p>AI-powered personalized emails</p></div>
+<div style="display:flex;gap:6px"><button class="rfr" id="emSync">Sync Instantly</button><button class="rfr" id="gmSync">Check Gmail Replies</button></div></div>
+<div class="sg">
+<div class="sc"><div class="sl">Campaigns</div><div class="sv blu" id="eCamp">-</div></div>
+<div class="sc"><div class="sl">Emails Sent</div><div class="sv grn" id="eSent">-</div></div>
+<div class="sc"><div class="sl">Opened</div><div class="sv ylw" id="eOpen">-</div></div>
+<div class="sc"><div class="sl">Replied</div><div class="sv grn" id="eRepl">-</div></div>
+</div>
+
+<!-- Email tabs -->
+<div class="tc" style="padding:16px">
+<div class="tab-bar">
+<button class="tab-btn act" data-tab="compose">Compose AI Email</button>
+<button class="tab-btn" data-tab="tracking">Email Tracking</button>
+</div>
+
+<!-- COMPOSE TAB -->
+<div class="tab-pg act" id="tab-compose">
+<div style="display:flex;gap:16px;flex-wrap:wrap">
+<!-- Left: contact selection -->
+<div style="flex:1;min-width:280px">
+<h3 style="font-size:14px;margin-bottom:10px;color:var(--wht)">1. Select Contacts</h3>
+<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+<input class="si" id="emSr" placeholder="Search contacts..." style="flex:1">
+<select class="fs" id="emCf"><option value="">All Categories</option></select>
+<select class="fs" id="emSf"><option value="">All Statuses</option><option>New</option><option>Contacted</option><option>Replied</option><option>Interested</option><option>Confirmed</option></select>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+<label class="ck"><input type="checkbox" id="emAll"> Select All Visible</label>
+<span class="cnt-sel" id="emCnt">0 selected</span>
+</div>
+<div class="sel-grid" id="emList"></div>
+</div>
+<!-- Right: generate & preview -->
+<div style="flex:1;min-width:280px">
+<h3 style="font-size:14px;margin-bottom:10px;color:var(--wht)">2. Generate & Preview</h3>
+<div id="aiStatus" style="padding:8px 12px;border-radius:8px;font-size:12px;margin-bottom:10px;background:var(--card2);color:var(--dim)">Checking AI status...</div>
+<button class="btn bp" id="emGen" style="width:100%;padding:12px;font-size:14px;margin-bottom:12px">Generate AI Emails</button>
+<div id="emPreviews" style="max-height:500px;overflow-y:auto"></div>
+<div id="emSendBar" style="display:none;margin-top:12px;padding:12px;background:var(--card2);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+<div><span id="emGenCnt" style="font-size:14px;font-weight:700;color:var(--pri)">0</span><span style="font-size:12px;color:var(--dim)"> emails generated</span></div>
+<div style="display:flex;gap:6px">
+<button class="btn bw" id="emReGen">Regenerate</button>
+<button class="btn bp" id="emSend" style="padding:10px 20px;font-size:14px">Send All via Gmail</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- TRACKING TAB -->
+<div class="tab-pg" id="tab-tracking">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div style="display:flex;gap:6px"><select class="fs" id="eFlt"><option value="">All</option><option>Sent</option><option>Opened</option><option>Replied</option><option>No Reply</option></select></div>
+<button class="btn bp" id="logE">+ Log Email</button>
+</div>
+<table><thead><tr><th>Company</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th><th>Source</th></tr></thead><tbody id="eTb"></tbody></table>
+<div class="tf" id="eCt">Loading...</div>
+</div>
+</div>
+</div>
+
+<!-- BOOTHS -->
+<div class="pg" id="pg-booths">
+<div class="ph"><div><h1>Booth Map</h1><p>MITEC KL - 60 booths</p></div><button class="rfr" id="bR">Refresh</button></div>
+<div class="sg" style="margin-bottom:12px">
+<div class="sc"><div class="sl">Total</div><div class="sv blu" id="bT">60</div></div>
+<div class="sc"><div class="sl">Available</div><div class="sv grn" id="bA">-</div></div>
+<div class="sc"><div class="sl">Booked</div><div class="sv ylw" id="bK">-</div></div>
+<div class="sc"><div class="sl">Revenue</div><div class="sv grn" id="bRev">-</div></div>
+</div>
+<div class="bgrid" id="bGrid"></div>
+</div>
+
+<!-- FOLLOWUPS -->
+<div class="pg" id="pg-followups">
+<div class="ph"><div><h1>Follow-ups</h1><p>Track tasks & deadlines</p></div><div style="display:flex;gap:6px"><select class="fs" id="fuFlt"><option value="">All</option><option>overdue</option><option>today</option><option>upcoming</option><option>completed</option></select><button class="btn bp" id="addF">+ Add Follow-up</button></div></div>
+<div class="ful" id="fuL"></div>
+</div>
+
+<!-- PIPELINE -->
+<div class="pg" id="pg-pipeline">
+<div class="ph"><div><h1>Contact Pipeline</h1><p>Track contacts through outreach stages</p></div>
+<div style="display:flex;gap:6px">
+<button class="btn bp" id="plChk">Check Replies</button>
+<button class="btn ba" id="plFU">Send Follow-ups</button>
+</div></div>
+<div id="plResult" style="display:none;padding:12px;border-radius:8px;margin-bottom:14px;font-size:13px;background:var(--card2);border:1px solid var(--bdr)"></div>
+<div class="sg" id="plStages"></div>
+<div class="tc" style="padding:16px;margin-bottom:14px">
+<h3 style="font-size:14px;color:var(--wht);margin-bottom:12px">Follow-up Schedule</h3>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+<div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;border-left:3px solid var(--acc)">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:var(--acc)">Round 1</span><span style="font-size:10px;color:var(--dim)">Day 5</span></div>
+<div style="font-size:13px;color:var(--wht);font-weight:600">Value Add</div>
+<div style="font-size:11px;color:var(--dim);margin-top:4px">Gentle follow-up with exhibition highlights</div>
+</div>
+<div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;border-left:3px solid var(--wrn)">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:var(--wrn)">Round 2</span><span style="font-size:10px;color:var(--dim)">Day 12</span></div>
+<div style="font-size:13px;color:var(--wht);font-weight:600">Urgency</div>
+<div style="font-size:11px;color:var(--dim);margin-top:4px">Booths filling fast, early-bird ending</div>
+</div>
+<div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;border-left:3px solid var(--dan)">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:var(--dan)">Round 3</span><span style="font-size:10px;color:var(--dim)">Day 20</span></div>
+<div style="font-size:13px;color:var(--wht);font-weight:600">Final</div>
+<div style="font-size:11px;color:var(--dim);margin-top:4px">Last message, mark as No Reply after</div>
+</div>
+</div>
+</div>
+<div class="tc">
+<div class="tt"><strong id="plTitle">All Contacts</strong>
+<select class="fs" id="plFlt"><option value="">All Stages</option><option value="NEW">New</option><option value="CONTACTED">Contacted</option><option value="REPLIED">Replied</option><option value="REGISTERED">Registered</option><option value="BOOTH_CONFIRMED">Booth Confirmed</option><option value="NO_REPLY">No Reply</option><option value="NOT_INTERESTED">Not Interested</option></select>
+</div>
+<div style="overflow-x:auto"><table><thead><tr><th>Company</th><th>Email</th><th>Category</th><th>Stage</th><th>Email Sent</th><th>FU1</th><th>FU2</th><th>FU3</th><th>Move</th></tr></thead><tbody id="plTb"></tbody></table></div>
+<div class="tf" id="plCt">Loading...</div>
+</div>
+</div>
+
+<!-- ACTIVITY -->
+<div class="pg" id="pg-activity">
+<div class="ph"><div><h1>Activity Log</h1><p>All actions tracked</p></div><button class="rfr" id="actR">Refresh</button></div>
+<div id="actTL"></div>
+</div>
+
+</div>
+</div>
+<div class="mo" id="mO"><div class="ml" id="mC"></div></div>
+
+<script>
+(function(){
+"use strict";
+var U='',PW='hqderek6767';
+var D={contacts:[],emails:[],booths:[],followups:[],activity:[]};
+var genEmails=[];
+function $(id){return document.getElementById(id);}
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+// API helpers
+async function api(path,opts){
+  var r=await fetch(path,opts);
+  return r.json();
+}
+async function getTab(tab){return api('/api/sheets?tab='+tab);}
+async function postSheet(body){return api('/api/sheets?user='+encodeURIComponent(U),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
+
+// LOGIN
+$('lB').onclick=function(){
+  var u=$('lU').value,p=$('lP').value;
+  if(!u){$('lE').textContent='Select an admin.';$('lE').style.display='block';return;}
+  if(p!==PW){$('lE').textContent='Wrong password.';$('lE').style.display='block';return;}
+  U=u==='derek'?'Derek':'HQ Papa';localStorage.setItem('agri_user',U);showApp();
+};
+$('lP').onkeydown=function(e){if(e.key==='Enter')$('lB').click();};
+$('loB').onclick=function(){localStorage.removeItem('agri_user');U='';$('app').style.display='none';$('LS').style.display='flex';};
+
+function showApp(){$('LS').style.display='none';$('app').style.display='block';$('uN').textContent=U;$('uA').textContent=U[0];nav('dash');}
+
+// NAV
+document.querySelectorAll('.ni').forEach(function(n){n.onclick=function(){nav(n.dataset.p);};});
+function nav(p){
+  document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('act');});
+  document.querySelectorAll('.ni').forEach(function(x){x.classList.remove('act');});
+  $('pg-'+p).classList.add('act');document.querySelector('.ni[data-p="'+p+'"]').classList.add('act');
+  if(p==='dash')loadDash();if(p==='contacts')loadContacts();if(p==='pipeline')loadPipeline();if(p==='emails'){loadEmails();checkAI();}if(p==='booths')loadBooths();if(p==='followups')loadFU();if(p==='activity')loadAct();
+}
+
+// EMAIL TABS
+document.querySelectorAll('.tab-btn').forEach(function(t){
+  t.onclick=function(){
+    document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('act');});
+    document.querySelectorAll('.tab-pg').forEach(function(x){x.classList.remove('act');});
+    t.classList.add('act');$('tab-'+t.dataset.tab).classList.add('act');
+  };
+});
+
+// DASHBOARD
+async function loadDash(){
+  var results=await Promise.all([getTab('Contacts'),getTab('Emails'),getTab('Booths'),getTab('Followups'),getTab('Activity')]);
+  var c=results[0],e=results[1],b=results[2],f=results[3],a=results[4];
+  D.contacts=c.data.filter(function(x){return x.Status!=='DELETED';});
+  D.emails=e.data;D.booths=b.data;D.followups=f.data;D.activity=a.data;
+  var days=Math.ceil((new Date('2026-09-10')-new Date())/(864e5));
+  $('dC').textContent=D.contacts.length;
+  $('dS').textContent=D.emails.length;
+  $('dR').textContent=D.emails.filter(function(x){return x.Status==='Replied';}).length;
+  var bk=D.booths.filter(function(x){return x.Status==='Booked';}).length;
+  $('dB').textContent=bk;$('dBs').textContent='of '+D.booths.length+' available';
+  $('dF').textContent=D.followups.filter(function(x){return x.Status!=='Completed';}).length;
+  $('dD').textContent=days>0?days:'NOW';
+  // Category bars
+  var cats={};D.contacts.forEach(function(c){cats[c.Category]=(cats[c.Category]||0)+1;});
+  var mx=Math.max.apply(null,Object.values(cats).concat([1])),cols=['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316'],h='';
+  Object.entries(cats).sort(function(a,b){return b[1]-a[1];}).slice(0,10).forEach(function(e,i){
+    h+='<div class="bar-wrap"><div class="bar-label"><span>'+esc(e[0])+'</span><span style="color:var(--dim)">'+e[1]+'</span></div><div class="bar-bg"><div class="bar-fg" style="background:'+cols[i%8]+';width:'+(e[1]/mx*100)+'%"></div></div></div>';
+  });
+  $('catB').innerHTML=h||'<p style="color:var(--dim);font-size:12px">No contacts</p>';
+  // Email funnel
+  var sent=D.emails.length,opened=D.emails.filter(function(x){return x.Status==='Opened'||x.Status==='Replied';}).length,
+    replied=D.emails.filter(function(x){return x.Status==='Replied';}).length,noR=D.emails.filter(function(x){return x.Status==='No Reply';}).length;
+  var fd=[['Sent',sent,'#3b82f6'],['Opened',opened,'#10b981'],['Replied',replied,'#f59e0b'],['No Reply',noR,'#ef4444']],mxF=Math.max(sent,1),fh='';
+  fd.forEach(function(r){fh+='<div class="bar-wrap"><div class="bar-label"><span>'+r[0]+'</span><span style="color:var(--dim)">'+r[1]+'</span></div><div class="bar-bg"><div class="bar-fg" style="background:'+r[2]+';width:'+(r[1]/mxF*100)+'%"></div></div></div>';});
+  $('emF').innerHTML=fh;
+  // Recent activity
+  var rec=D.activity.slice(0,10),ah='';
+  rec.forEach(function(a){ah+='<tr><td style="white-space:nowrap;font-size:11px">'+esc(a.Timestamp||'').replace('T',' ').slice(0,16)+'</td><td>'+esc(a.User)+'</td><td><span class="bdg bdg-b">'+esc(a.Action)+'</span></td><td>'+esc(a.Details)+'</td></tr>';});
+  $('rAct').innerHTML=ah||'<tr><td colspan="4" class="loading">No activity yet</td></tr>';
+}
+$('dashR').onclick=loadDash;
+
+// CONTACTS
+var cData=[];
+async function loadContacts(){
+  var r=await getTab('Contacts');cData=r.data.filter(function(x){return x.Status!=='DELETED'&&x.Company;});
+  var cats=[],locs=[];cData.forEach(function(c){if(c.Category&&cats.indexOf(c.Category)<0)cats.push(c.Category);if(c.Location&&locs.indexOf(c.Location)<0)locs.push(c.Location);});
+  cats.sort();locs.sort();
+  $('cCf').innerHTML='<option value="">All Categories</option>'+cats.map(function(c){return'<option>'+esc(c)+'</option>';}).join('');
+  $('cLf').innerHTML='<option value="">All Locations</option>'+locs.map(function(l){return'<option>'+esc(l)+'</option>';}).join('');
+  // Also update email compose filters
+  $('emCf').innerHTML='<option value="">All Categories</option>'+cats.map(function(c){return'<option>'+esc(c)+'</option>';}).join('');
+  renderC();renderEmSel();
+}
+function renderC(){
+  var s=($('cSr').value||'').toLowerCase(),cf=$('cCf').value,lf=$('cLf').value,sf=$('cSf').value;
+  var f=cData.filter(function(c){
+    if(s&&(c.Company||'').toLowerCase().indexOf(s)<0&&(c.Email||'').toLowerCase().indexOf(s)<0&&(c.Name||'').toLowerCase().indexOf(s)<0)return false;
+    if(cf&&c.Category!==cf)return false;if(lf&&c.Location!==lf)return false;if(sf&&c.Status!==sf)return false;return true;
+  });
+  var sb=function(st){var m={New:'bdg-gr',Contacted:'bdg-b',Replied:'bdg-y',Interested:'bdg-g',Confirmed:'bdg-g','Not Interested':'bdg-r'};return'<span class="bdg '+(m[st]||'bdg-gr')+'">'+esc(st)+'</span>';};
+  var h='';f.slice(0,150).forEach(function(c){
+    h+='<tr><td><strong>'+esc(c.Company)+'</strong></td><td>'+esc(c.Name)+'</td><td style="font-size:11px">'+esc(c.Email)+'</td><td><span class="bdg bdg-b">'+esc(c.Category)+'</span></td><td>'+esc(c.Location)+'</td><td>'+sb(c.Status)+'</td><td><button class="btn bs bp" data-ce="'+c.ID+'">Edit</button> <button class="btn bs bd" data-cd="'+c.ID+'">Del</button></td></tr>';
+  });
+  $('cTb').innerHTML=h||'<tr><td colspan="7" class="loading">No contacts found</td></tr>';
+  $('cCt').textContent=f.length+' contacts'+(f.length>150?' (showing 150)':'');
+}
+$('cSr').oninput=renderC;$('cCf').onchange=renderC;$('cLf').onchange=renderC;$('cSf').onchange=renderC;
+$('conR').onclick=loadContacts;
+
+$('cTb').onclick=async function(e){
+  var b=e.target;
+  if(b.dataset.ce)editC(b.dataset.ce);
+  if(b.dataset.cd){if(!confirm('Delete?'))return;await postSheet({action:'delete_contact',row:{ID:b.dataset.cd}});loadContacts();}
+};
+
+function editC(id){
+  var c=cData.find(function(x){return x.ID===id;});if(!c)return;
+  $('mC').innerHTML='<h2>Edit Contact</h2><div class="fg"><label>Company</label><input id="mCo" value="'+esc(c.Company)+'"></div><div class="fg"><label>Contact</label><input id="mNa" value="'+esc(c.Name)+'"></div><div class="fg"><label>Email</label><input id="mEm" value="'+esc(c.Email)+'"></div><div class="fg"><label>Category</label><input id="mCa" value="'+esc(c.Category)+'"></div><div class="fg"><label>Location</label><input id="mLo" value="'+esc(c.Location)+'"></div><div class="fg"><label>Status</label><select id="mSt"><option'+(c.Status==='New'?' selected':'')+'>New</option><option'+(c.Status==='Contacted'?' selected':'')+'>Contacted</option><option'+(c.Status==='Replied'?' selected':'')+'>Replied</option><option'+(c.Status==='Interested'?' selected':'')+'>Interested</option><option'+(c.Status==='Confirmed'?' selected':'')+'>Confirmed</option><option'+(c.Status==='Not Interested'?' selected':'')+'>Not Interested</option></select></div><div class="fg"><label>Notes</label><input id="mNo" value="'+esc(c.Notes||'')+'"></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Save</button></div>';
+  openM();$('mX').onclick=closeM;
+  $('mSv').onclick=async function(){
+    await postSheet({action:'update_contact',row:{ID:id,Name:$('mNa').value,Company:$('mCo').value,Email:$('mEm').value,Category:$('mCa').value,Location:$('mLo').value,Status:$('mSt').value,Notes:$('mNo').value}});
+    closeM();loadContacts();
+  };
+}
+
+$('addC').onclick=function(){
+  $('mC').innerHTML='<h2>Add Contact</h2><div class="fg"><label>Company</label><input id="mCo"></div><div class="fg"><label>Contact Person</label><input id="mNa"></div><div class="fg"><label>Email</label><input id="mEm"></div><div class="fg"><label>Category</label><input id="mCa" placeholder="e.g. Ag-Tech"></div><div class="fg"><label>Location</label><input id="mLo" placeholder="e.g. Kuala Lumpur"></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Add</button></div>';
+  openM();$('mX').onclick=closeM;
+  $('mSv').onclick=async function(){
+    var maxId=cData.length?Math.max.apply(null,cData.map(function(c){return parseInt(c.ID)||0;}))+1:1;
+    await postSheet({action:'append',tab:'Contacts',values:[[maxId,$('mNa').value,$('mCo').value,$('mEm').value,$('mCa').value,$('mLo').value,'New','',new Date().toISOString()]]});
+    closeM();loadContacts();
+  };
+};
+
+// CSV Import
+$('csvI').onclick=function(){$('csvF').click();};
+$('csvF').onchange=async function(e){
+  var file=e.target.files[0];if(!file)return;
+  var text=await file.text(),lines=text.trim().split('\n');
+  if(lines.length<2){alert('Empty CSV');return;}
+  var existing=new Set(cData.map(function(c){return(c.Email||'').toLowerCase();}));
+  var rows=[],skip=0;
+  for(var i=1;i<lines.length;i++){
+    var p=lines[i].match(/(?:"[^"]*"|[^,])+/g);if(!p||p.length<3)continue;
+    var cl=p.map(function(x){return x.replace(/^"|"$/g,'').trim();});
+    if(existing.has(cl[2].toLowerCase())){skip++;continue;}
+    rows.push(cl.slice(0,5));existing.add(cl[2].toLowerCase());
+  }
+  if(rows.length){await postSheet({action:'bulk_import',values:rows});alert('Imported '+rows.length+' contacts! '+skip+' duplicates skipped.');}
+  else alert('No new contacts to import ('+skip+' duplicates).');
+  e.target.value='';loadContacts();
+};
+
+// CSV Export
+$('csvE').onclick=function(){
+  var csv='Name,Company,Email,Category,Location,Status,Notes\n';
+  cData.forEach(function(c){csv+=[c.Name,c.Company,c.Email,c.Category,c.Location,c.Status,c.Notes||''].map(function(v){return'"'+(v||'').replace(/"/g,'""')+'"';}).join(',')+'\n';});
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='agri_contacts_'+new Date().toISOString().split('T')[0]+'.csv';a.click();
+};
+
+// EMAILS - COMPOSE
+var emSel=new Set();
+
+function renderEmSel(){
+  var s=($('emSr').value||'').toLowerCase(),cf=$('emCf').value,sf=$('emSf').value;
+  var f=cData.filter(function(c){
+    if(!c.Email)return false;
+    if(s&&(c.Company||'').toLowerCase().indexOf(s)<0&&(c.Email||'').toLowerCase().indexOf(s)<0&&(c.Name||'').toLowerCase().indexOf(s)<0)return false;
+    if(cf&&c.Category!==cf)return false;if(sf&&c.Status!==sf)return false;return true;
+  });
+  var h='';f.slice(0,100).forEach(function(c){
+    var chk=emSel.has(c.ID)?'checked':'';
+    h+='<div class="sel-row" data-sid="'+c.ID+'"><input type="checkbox" '+chk+' style="accent-color:var(--pri);width:14px;height:14px;pointer-events:none"><span class="sr-co">'+esc(c.Company)+'</span><span style="font-size:11px;color:var(--txt)">'+esc(c.Email)+'</span><span class="sr-cat">'+esc(c.Category)+'</span></div>';
+  });
+  $('emList').innerHTML=h||'<p class="loading" style="padding:10px">No contacts with email</p>';
+  $('emCnt').textContent=emSel.size+' selected';
+  // Update select all checkbox
+  var allVis=f.filter(function(c){return c.Email;}).slice(0,100);
+  var allChecked=allVis.length>0&&allVis.every(function(c){return emSel.has(c.ID);});
+  $('emAll').checked=allChecked;
+}
+
+$('emSr').oninput=renderEmSel;$('emCf').onchange=renderEmSel;$('emSf').onchange=renderEmSel;
+
+$('emList').onclick=function(e){
+  var row=e.target.closest('.sel-row');if(!row)return;
+  var id=row.dataset.sid;
+  if(emSel.has(id))emSel.delete(id);else emSel.add(id);
+  renderEmSel();
+};
+
+$('emAll').onchange=function(){
+  var s=($('emSr').value||'').toLowerCase(),cf=$('emCf').value,sf=$('emSf').value;
+  var f=cData.filter(function(c){
+    if(!c.Email)return false;
+    if(s&&(c.Company||'').toLowerCase().indexOf(s)<0&&(c.Email||'').toLowerCase().indexOf(s)<0&&(c.Name||'').toLowerCase().indexOf(s)<0)return false;
+    if(cf&&c.Category!==cf)return false;if(sf&&c.Status!==sf)return false;return true;
+  });
+  if($('emAll').checked){f.slice(0,100).forEach(function(c){emSel.add(c.ID);});}
+  else{f.slice(0,100).forEach(function(c){emSel.delete(c.ID);});}
+  renderEmSel();
+};
+
+// Check AI status
+var aiReady=false;
+async function checkAI(){
+  try{
+    var r=await api('/api/email-gen?action=check');
+    aiReady=r.ai;
+    if(r.ai){
+      $('aiStatus').innerHTML='<span style="color:var(--pri);font-weight:600">Claude Haiku 4.5 connected</span> — AI will research each company and write unique personalized emails';
+      $('aiStatus').style.borderLeft='3px solid var(--pri)';
+      $('emGen').textContent='Generate AI Emails (Haiku 4.5)';
+    }else{
+      $('aiStatus').innerHTML='<span style="color:var(--wrn);font-weight:600">AI not connected</span> — Using smart templates. Add ANTHROPIC_API_KEY in Vercel to enable Claude AI';
+      $('aiStatus').style.borderLeft='3px solid var(--wrn)';
+      $('emGen').textContent='Generate Emails (Template)';
+    }
+  }catch(e){$('aiStatus').textContent='Could not check AI status';}
+}
+
+// Generate AI emails
+$('emGen').onclick=async function(){
+  if(emSel.size===0){alert('Select at least one contact first.');return;}
+  var sel=cData.filter(function(c){return emSel.has(c.ID);});
+  if(aiReady&&sel.length>10){
+    if(!confirm('Generate AI emails for '+sel.length+' contacts?\n\nThis will use your Anthropic API credits (~$0.001 per email).\n\nFor '+sel.length+' emails, cost is roughly $'+((sel.length*0.001).toFixed(2))))return;
+  }
+  $('emGen').textContent=aiReady?'AI generating '+sel.length+' emails...':'Generating '+sel.length+' emails...';
+  $('emGen').disabled=true;
+  try{
+    var r=await api('/api/email-gen?action=generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacts:sel})});
+    genEmails=r.emails||[];
+    renderPreviews();
+    if(r.ai){
+      $('emGen').textContent='Generate AI Emails (Haiku 4.5)';
+    }else{
+      $('emGen').textContent='Generate Emails (Template)';
+    }
+    if(r.errors&&r.errors.length){
+      alert(r.errors.length+' emails fell back to template due to errors:\n'+r.errors.map(function(e){return e.company+': '+e.error;}).join('\n'));
+    }
+  }catch(e){alert('Error generating: '+e.message);$('emGen').textContent=aiReady?'Generate AI Emails (Haiku 4.5)':'Generate Emails (Template)';}
+  $('emGen').disabled=false;
+};
+
+function renderPreviews(){
+  if(!genEmails.length){$('emPreviews').innerHTML='<p class="loading">No emails generated yet. Select contacts and click Generate.</p>';$('emSendBar').style.display='none';return;}
+  var h='';
+  genEmails.forEach(function(em,i){
+    h+='<div class="eml-card" id="eml-'+i+'"><h3>'+esc(em.company)+'</h3><div class="eml-meta">To: '+esc(em.to)+' | '+esc(em.category)+'</div><div style="font-size:11px;color:var(--wrn);margin-bottom:6px">Subject: '+esc(em.subject)+'</div><div class="eml-body">'+esc(em.body)+'</div><div class="eml-acts"><button class="btn bs ba" data-edi="'+i+'">Edit</button><button class="btn bs bd" data-rmi="'+i+'">Remove</button></div></div>';
+  });
+  $('emPreviews').innerHTML=h;
+  $('emSendBar').style.display='flex';
+  $('emGenCnt').textContent=genEmails.length;
+}
+
+// Edit individual email
+$('emPreviews').onclick=function(e){
+  if(e.target.dataset.edi!==undefined){
+    var i=parseInt(e.target.dataset.edi),em=genEmails[i];if(!em)return;
+    $('mC').innerHTML='<h2>Edit Email to '+esc(em.company)+'</h2><div class="fg"><label>To</label><input id="meTo" value="'+esc(em.to)+'"></div><div class="fg"><label>Subject</label><input id="meSub" value="'+esc(em.subject)+'"></div><div class="fg"><label>Body</label><textarea id="meBod" style="min-height:250px">'+esc(em.body)+'</textarea></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Save</button></div>';
+    openM();$('mX').onclick=closeM;
+    $('mSv').onclick=function(){
+      genEmails[i].to=$('meTo').value;genEmails[i].subject=$('meSub').value;genEmails[i].body=$('meBod').value;
+      closeM();renderPreviews();
+    };
+  }
+  if(e.target.dataset.rmi!==undefined){
+    genEmails.splice(parseInt(e.target.dataset.rmi),1);renderPreviews();
+  }
+};
+
+// Regenerate
+$('emReGen').onclick=function(){$('emGen').click();};
+
+// Send all emails
+$('emSend').onclick=async function(){
+  if(!genEmails.length){alert('No emails to send.');return;}
+  if(!confirm('Send '+genEmails.length+' emails via Gmail?\n\nMake sure your Gmail is connected in Maton.'))return;
+  $('emSend').textContent='Sending...';$('emSend').disabled=true;
+  try{
+    var r=await api('/api/email-gen?action=send_batch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({emails:genEmails})});
+    if(r.sent>0){
+      // Log sent emails to sheet
+      for(var em of genEmails){
+        var ct=cData.find(function(c){return c.Email===em.to;});
+        var maxId=D.emails.length?Math.max.apply(null,D.emails.map(function(e){return parseInt(e.ID)||0;}))+1:1;
+        D.emails.push({ID:String(maxId)});
+        await postSheet({action:'append',tab:'Emails',values:[[maxId,em.company,em.to,em.subject,new Date().toISOString(),'Sent','Gmail','']]});
+        // Update contact status to Contacted
+        if(ct&&ct.Status==='New'){
+          await postSheet({action:'update_contact',row:{ID:ct.ID,Name:ct.Name,Company:ct.Company,Email:ct.Email,Category:ct.Category,Location:ct.Location,Status:'Contacted',Notes:(ct.Notes||'')+' Email sent '+new Date().toISOString().split('T')[0]}});
+        }
+      }
+      alert('Sent: '+r.sent+' emails!\nFailed: '+(r.failed||0));
+      genEmails=[];renderPreviews();emSel.clear();renderEmSel();loadEmails();
+    }else{
+      var errs=r.results?r.results.filter(function(x){return!x.ok;}).map(function(x){return x.error;}).join(', '):'Unknown error';
+      alert('Failed to send. Errors: '+errs+'\n\nMake sure Gmail is connected in your Maton account.');
+    }
+  }catch(e){alert('Send error: '+e.message);}
+  $('emSend').textContent='Send All via Gmail';$('emSend').disabled=false;
+};
+
+// EMAILS - TRACKING
+async function loadEmails(){
+  var r=await getTab('Emails');D.emails=r.data;
+  var flt=$('eFlt').value,f=D.emails;
+  if(flt)f=f.filter(function(e){return e.Status===flt;});
+  var h='';f.forEach(function(e){
+    var sb=function(s){var m={Sent:'bdg-b',Opened:'bdg-g',Replied:'bdg-y','No Reply':'bdg-r'};return'<span class="bdg '+(m[s]||'bdg-gr')+'">'+esc(s)+'</span>';};
+    h+='<tr><td><strong>'+esc(e.Company)+'</strong></td><td style="font-size:11px">'+esc(e.Email)+'</td><td>'+esc(e.Subject)+'</td><td>'+esc((e['Sent Date']||'').slice(0,10))+'</td><td>'+sb(e.Status)+'</td><td><span class="bdg bdg-gr">'+esc(e.Source||'Manual')+'</span></td></tr>';
+  });
+  $('eTb').innerHTML=h||'<tr><td colspan="6" class="loading">No emails tracked yet</td></tr>';
+  $('eCt').textContent=f.length+' emails';
+  $('eSent').textContent=D.emails.length;$('eOpen').textContent=D.emails.filter(function(x){return x.Status==='Opened'||x.Status==='Replied';}).length;
+  $('eRepl').textContent=D.emails.filter(function(x){return x.Status==='Replied';}).length;$('eCamp').textContent='-';
+  // Also load contacts for compose if not loaded
+  if(!cData.length)loadContacts();
+}
+$('eFlt').onchange=loadEmails;
+
+// Log email manually
+$('logE').onclick=function(){
+  var opts='<option value="">Select...</option>';cData.forEach(function(c){opts+='<option value="'+c.ID+'">'+esc(c.Company)+' - '+esc(c.Email)+'</option>';});
+  $('mC').innerHTML='<h2>Log Email</h2><div class="fg"><label>Contact</label><select id="mEC">'+opts+'</select></div><div class="fg"><label>Subject</label><input id="mSub" value="Invitation to Exhibit - AgriMalaysia 2026"></div><div class="fg"><label>Status</label><select id="mES"><option>Sent</option><option>Opened</option><option>Replied</option><option value="No Reply">No Reply</option></select></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Log</button></div>';
+  openM();$('mX').onclick=closeM;
+  $('mSv').onclick=async function(){
+    var cid=$('mEC').value,ct=cData.find(function(c){return c.ID===cid;});if(!ct){alert('Select a contact');return;}
+    var maxId=D.emails.length?Math.max.apply(null,D.emails.map(function(e){return parseInt(e.ID)||0;}))+1:1;
+    await postSheet({action:'append',tab:'Emails',values:[[maxId,ct.Company,ct.Email,$('mSub').value,new Date().toISOString(),$('mES').value,'Manual','']]});
+    closeM();loadEmails();
+  };
+};
+
+// Sync Instantly
+$('emSync').onclick=async function(){
+  $('emSync').textContent='Syncing...';
+  try{
+    var camps=await api('/api/instantly?action=campaigns');
+    if(camps&&Array.isArray(camps)){
+      $('eCamp').textContent=camps.length;
+      for(var c of camps){
+        var stats=await api('/api/instantly?action=campaign_stats&id='+c.id);
+        if(stats){$('eSent').textContent=stats.sent||0;$('eOpen').textContent=stats.opened||0;$('eRepl').textContent=stats.replied||0;}
+      }
+      alert('Synced '+camps.length+' campaigns from Instantly!');
+    }else{alert('No campaigns found or Instantly not connected.');}
+  }catch(e){alert('Error syncing Instantly: '+e.message);}
+  $('emSync').textContent='Sync Instantly';
+};
+
+// Check Gmail replies
+$('gmSync').onclick=async function(){
+  $('gmSync').textContent='Checking...';
+  try{
+    var r=await api('/api/gmail?action=check_replies&q=is:inbox subject:AgriMalaysia newer_than:30d');
+    if(r.replies&&r.replies.length){
+      alert('Found '+r.replies.length+' potential replies in Gmail!');
+      for(var reply of r.replies){
+        var match=cData.find(function(c){return reply.from.toLowerCase().indexOf(c.Email.toLowerCase())>=0;});
+        if(match&&match.Status!=='Replied'){
+          await postSheet({action:'update_contact',row:{ID:match.ID,Name:match.Name,Company:match.Company,Email:match.Email,Category:match.Category,Location:match.Location,Status:'Replied',Notes:(match.Notes||'')+' Gmail reply detected '+new Date().toISOString().slice(0,10)}});
+        }
+      }
+      loadContacts();
+    }else{alert('No new replies found in Gmail.');}
+  }catch(e){alert('Error checking Gmail: '+e.message);}
+  $('gmSync').textContent='Check Gmail Replies';
+};
+
+// BOOTHS
+async function loadBooths(){
+  var r=await getTab('Booths');D.booths=r.data;
+  var h='';D.booths.forEach(function(b){
+    var cls=b.Status==='Booked'?'bkd':b.Type==='Premium'?'prem':'avail';
+    h+='<div class="bcell '+cls+'" data-bi="'+esc(b['Booth ID'])+'"><div class="bid">'+esc(b['Booth ID'])+'</div><div class="bsz">'+esc(b.Size)+' | RM'+parseInt(b['Price (RM)']||0).toLocaleString()+'</div>'+(b.Company?'<div class="bco">'+esc(b.Company)+'</div>':'<div class="bco" style="color:var(--dim)">'+(b.Type==='Premium'?'Premium':'Open')+'</div>')+'</div>';
+  });
+  $('bGrid').innerHTML=h;
+  $('bT').textContent=D.booths.length;$('bA').textContent=D.booths.filter(function(b){return b.Status==='Available';}).length;
+  $('bK').textContent=D.booths.filter(function(b){return b.Status==='Booked';}).length;
+  var rev=D.booths.filter(function(b){return b.Status==='Booked';}).reduce(function(s,b){return s+parseInt(b['Price (RM)']||0);},0);
+  $('bRev').textContent='RM '+rev.toLocaleString();
+}
+$('bR').onclick=loadBooths;
+
+$('bGrid').onclick=function(e){
+  var cell=e.target.closest('.bcell');if(!cell)return;
+  var bid=cell.dataset.bi,b=D.booths.find(function(x){return x['Booth ID']===bid;});if(!b)return;
+  var copts='<option value="">-- None --</option>';cData.filter(function(c){return c.Status==='Confirmed'||c.Status==='Interested';}).forEach(function(c){copts+='<option value="'+esc(c.Company)+'"'+(b.Company===c.Company?' selected':'')+'>'+esc(c.Company)+'</option>';});
+  $('mC').innerHTML='<h2>Booth '+esc(bid)+'</h2><p style="color:var(--dim);margin-bottom:12px">'+esc(b.Size)+' | '+esc(b.Type)+' | RM'+parseInt(b['Price (RM)']||0).toLocaleString()+'</p><div class="fg"><label>Status</label><select id="mBS"><option value="Available"'+(b.Status==='Available'?' selected':'')+'>Available</option><option value="Booked"'+(b.Status==='Booked'?' selected':'')+'>Booked</option></select></div><div class="fg"><label>Company (from contacts)</label><select id="mBC">'+copts+'</select></div><div class="fg"><label>Or type company</label><input id="mBT" value="'+esc(b.Company)+'"></div><div class="fg"><label>Payment Status</label><select id="mBP"><option value=""'+(b['Payment Status']===''?' selected':'')+'>--</option><option'+(b['Payment Status']==='Paid'?' selected':'')+'>Paid</option><option'+(b['Payment Status']==='Pending'?' selected':'')+'>Pending</option><option'+(b['Payment Status']==='Invoiced'?' selected':'')+'>Invoiced</option></select></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Save</button></div>';
+  openM();$('mX').onclick=closeM;
+  $('mSv').onclick=async function(){
+    var co=$('mBT').value||$('mBC').value,st=$('mBS').value;
+    if(co&&st==='Available')st='Booked';if(!co)st='Available';
+    await postSheet({action:'update_booth',row:{'Booth ID':bid,Size:b.Size,Type:b.Type,Status:st,Company:co,'Price (RM)':b['Price (RM)'],'Payment Status':$('mBP').value}});
+    closeM();loadBooths();
+  };
+};
+
+// FOLLOWUPS
+async function loadFU(){
+  var r=await getTab('Followups');D.followups=r.data;
+  var flt=$('fuFlt').value,today=new Date().toISOString().split('T')[0];
+  var f=D.followups;
+  if(flt==='overdue')f=f.filter(function(x){return x.Date<today&&x.Status!=='Completed';});
+  if(flt==='today')f=f.filter(function(x){return x.Date===today;});
+  if(flt==='upcoming')f=f.filter(function(x){return x.Date>today&&x.Status!=='Completed';});
+  if(flt==='completed')f=f.filter(function(x){return x.Status==='Completed';});
+  f.sort(function(a,b){return(a.Date||'').localeCompare(b.Date||'');});
+  var h='';f.forEach(function(fu){
+    var ov=fu.Date<today&&fu.Status!=='Completed',ist=fu.Date===today;
+    var du=Math.ceil((new Date(fu.Date)-new Date(today))/864e5),dt=ov?Math.abs(du)+'d overdue':ist?'Today':'In '+du+'d';
+    h+='<div class="fuc" style="'+(ov?'border-color:var(--dan)':'')+(fu.Status==='Completed'?'opacity:.5':'')+'"><div class="fui"><h3>'+esc(fu.Company)+(fu.Status==='Completed'?' <span class="bdg bdg-g">Done</span>':'')+'</h3><p>'+esc(fu.Task)+'</p></div><div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-size:12px;font-weight:600;color:'+(ov?'var(--dan)':ist?'var(--wrn)':'var(--dim)')+'">'+esc(fu.Date)+'</div><div style="font-size:10px;color:var(--dim)">'+dt+'</div></div>'+(fu.Status!=='Completed'?'<button class="btn bs bp" data-fd="'+fu.ID+'">Done</button>':'')+'</div></div>';
+  });
+  $('fuL').innerHTML=h||'<p class="loading">No follow-ups</p>';
+}
+$('fuFlt').onchange=loadFU;
+
+$('fuL').onclick=async function(e){
+  if(e.target.dataset.fd){
+    var fu=D.followups.find(function(x){return x.ID===e.target.dataset.fd;});if(!fu)return;
+    fu.Status='Completed';await postSheet({action:'update_followup',row:fu});
+    await postSheet({action:'log',values:['Follow-up Done',fu.Company+': '+fu.Task]});loadFU();
+  }
+};
+
+$('addF').onclick=function(){
+  var opts='<option value="">Select...</option>';cData.forEach(function(c){opts+='<option>'+esc(c.Company)+'</option>';});
+  var tom=new Date();tom.setDate(tom.getDate()+1);
+  $('mC').innerHTML='<h2>Add Follow-up</h2><div class="fg"><label>Company</label><select id="mFC">'+opts+'</select></div><div class="fg"><label>Task</label><input id="mFT" placeholder="e.g. Send booth proposal"></div><div class="fg"><label>Date</label><input type="date" id="mFD" value="'+tom.toISOString().split('T')[0]+'"></div><div class="fg"><label>Assign To</label><select id="mFA"><option>'+esc(U)+'</option><option>Derek</option><option>HQ Papa</option></select></div><div class="mact"><button class="btn bc" id="mX">Cancel</button><button class="btn bp" id="mSv">Add</button></div>';
+  openM();$('mX').onclick=closeM;
+  $('mSv').onclick=async function(){
+    var maxId=D.followups.length?Math.max.apply(null,D.followups.map(function(f){return parseInt(f.ID)||0;}))+1:1;
+    await postSheet({action:'append',tab:'Followups',values:[[maxId,$('mFC').value,$('mFT').value,$('mFD').value,'Pending',$('mFA').value,new Date().toISOString()]]});
+    closeM();loadFU();
+  };
+};
+
+// ACTIVITY
+async function loadAct(){
+  var r=await getTab('Activity');D.activity=r.data;
+  var icons={'Contact Added':'👤','Contact Updated':'✏️','Contact Deleted':'🗑️','Email Sent':'📧','Booth Updated':'🏢','Follow-up Added':'📅','Follow-up Done':'✅','CSV Import':'📥','Record Added':'📌'};
+  var h='';D.activity.slice(0,50).forEach(function(a){
+    h+='<div class="tli"><div class="tld">'+(icons[a.Action]||'📌')+'</div><div class="tlc"><h4>'+esc(a.Action)+' <span style="color:var(--dim);font-weight:400">by '+esc(a.User)+'</span></h4><p>'+esc(a.Details)+'</p><p style="font-size:10px;color:var(--dim);margin-top:2px">'+esc((a.Timestamp||'').replace('T',' ').slice(0,19))+'</p></div></div>';
+  });
+  $('actTL').innerHTML=h||'<p class="loading">No activity</p>';
+}
+$('actR').onclick=loadAct;
+
+// PIPELINE
+var plData=[];
+async function loadPipeline(){
+  // Get pipeline summary
+  var p=await api('/api/followup-engine?action=pipeline');
+  var stages=p.stages||{};
+  var cfgs={NEW:['New','var(--dim)'],CONTACTED:['Contacted','var(--acc)'],REPLIED:['Replied','var(--pri)'],REGISTERED:['Registered','var(--wrn)'],BOOTH_CONFIRMED:['Confirmed','#22c55e'],NO_REPLY:['No Reply','var(--dan)'],NOT_INTERESTED:['Not Interested','#6b7280']};
+  var sh='';
+  Object.keys(cfgs).forEach(function(k){
+    sh+='<div class="sc" style="cursor:pointer" data-pls="'+k+'"><div class="sl">'+cfgs[k][0]+'</div><div class="sv" style="color:'+cfgs[k][1]+'">'+(stages[k]||0)+'</div></div>';
+  });
+  $('plStages').innerHTML=sh;
+  // Click to filter
+  $('plStages').onclick=function(e){var c=e.target.closest('[data-pls]');if(c){$('plFlt').value=c.dataset.pls;renderPL();}};
+
+  // Load contacts with pipeline data
+  var r=await getTab('Contacts');plData=r.data.filter(function(x){return x.Status!=='DELETED'&&x.Email;});
+  renderPL();
+}
+
+function renderPL(){
+  var flt=$('plFlt').value;
+  var f=plData;
+  if(flt){
+    f=plData.filter(function(c){
+      var stage=c['Pipeline Stage']||'NEW';
+      // Also match old Status values
+      if(stage===flt)return true;
+      if(flt==='CONTACTED'&&c.Status==='Contacted'&&stage==='NEW')return true;
+      if(flt==='REPLIED'&&(c.Status==='Replied'||c.Status==='Interested')&&stage==='NEW')return true;
+      if(flt==='REGISTERED'&&c.Status==='Confirmed'&&stage==='NEW')return true;
+      if(flt==='NOT_INTERESTED'&&c.Status==='Not Interested'&&stage==='NEW')return true;
+      return false;
+    });
+  }
+  $('plTitle').textContent=flt?flt.replace('_',' ')+' ('+f.length+')':'All Contacts ('+f.length+')';
+  var sb=function(s){var m={NEW:'bdg-gr',CONTACTED:'bdg-b',REPLIED:'bdg-g',REGISTERED:'bdg-y',BOOTH_CONFIRMED:'bdg-g',NO_REPLY:'bdg-r',NOT_INTERESTED:'bdg-gr'};return'<span class="bdg '+(m[s]||'bdg-gr')+'">'+esc(s||'NEW')+'</span>';};
+  var dt=function(d){return d?d.slice(0,10):'—';};
+  var opts='<option value="">—</option><option value="NEW">New</option><option value="CONTACTED">Contacted</option><option value="REPLIED">Replied</option><option value="REGISTERED">Registered</option><option value="BOOTH_CONFIRMED">Confirmed</option><option value="NO_REPLY">No Reply</option><option value="NOT_INTERESTED">Not Interested</option>';
+  var h='';f.slice(0,150).forEach(function(c){
+    var stage=c['Pipeline Stage']||'NEW';
+    h+='<tr><td><strong>'+esc(c.Company)+'</strong></td><td style="font-size:11px">'+esc(c.Email)+'</td><td>'+esc(c.Category)+'</td><td>'+sb(stage)+'</td><td style="font-size:11px">'+dt(c['Email Sent Date'])+'</td><td style="font-size:11px">'+dt(c['Followup 1 Sent'])+'</td><td style="font-size:11px">'+dt(c['Followup 2 Sent'])+'</td><td style="font-size:11px">'+dt(c['Followup 3 Sent'])+'</td><td><select class="fs" style="font-size:10px;padding:4px" data-mid="'+c.ID+'" data-cur="'+stage+'">'+opts.replace('value="'+stage+'"','value="'+stage+'" selected')+'</select></td></tr>';
+  });
+  $('plTb').innerHTML=h||'<tr><td colspan="9" class="loading">No contacts</td></tr>';
+  $('plCt').textContent=f.length+' contacts'+(f.length>150?' (showing 150)':'');
+}
+$('plFlt').onchange=renderPL;
+
+// Move stage on dropdown change
+$('plTb').onchange=async function(e){
+  var sel=e.target;if(!sel.dataset.mid)return;
+  var newStage=sel.value,oldStage=sel.dataset.cur;
+  if(newStage===oldStage||!newStage)return;
+  sel.disabled=true;
+  await api('/api/followup-engine?action=move_stage&user='+encodeURIComponent(U),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contactId:sel.dataset.mid,stage:newStage})});
+  sel.disabled=false;
+  loadPipeline();
+};
+
+// Check replies button
+$('plChk').onclick=async function(){
+  $('plChk').textContent='Checking...';$('plChk').disabled=true;
+  $('plResult').style.display='block';$('plResult').innerHTML='Scanning Gmail for replies...';
+  try{
+    var r=await api('/api/followup-engine?action=check_replies',{method:'POST'});
+    $('plResult').innerHTML='Checked <strong>'+r.checked+'</strong> contacted companies. <span style="color:var(--pri);font-weight:700">'+r.replied+'</span> replied!';
+    $('plResult').style.borderColor=r.replied>0?'var(--pri)':'var(--bdr)';
+    loadPipeline();
+  }catch(e){$('plResult').innerHTML='<span style="color:var(--dan)">Error: '+esc(e.message)+'</span>';}
+  $('plChk').textContent='Check Replies';$('plChk').disabled=false;
+};
+
+// Send follow-ups button
+$('plFU').onclick=async function(){
+  if(!confirm('Send follow-up emails to contacted companies who haven\'t replied?\n\nRound 1 (Day 5) → Round 2 (Day 12) → Round 3 (Day 20)\n\nAI will personalize each email if Haiku is connected.'))return;
+  $('plFU').textContent='Sending...';$('plFU').disabled=true;
+  $('plResult').style.display='block';$('plResult').innerHTML='Sending follow-up emails...';
+  try{
+    var r=await api('/api/followup-engine?action=send_followups',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({useAI:true,limit:20})});
+    var msg='<span style="color:var(--pri);font-weight:700">'+r.sent+'</span> follow-ups sent'+(r.ai?' (AI personalized)':' (templates)')+'! '+r.skipped+' skipped (not ready yet).';
+    if(r.results){
+      var fails=r.results.filter(function(x){return!x.ok;});
+      if(fails.length)msg+=' <span style="color:var(--dan)">'+fails.length+' failed.</span>';
+    }
+    $('plResult').innerHTML=msg;
+    loadPipeline();
+  }catch(e){$('plResult').innerHTML='<span style="color:var(--dan)">Error: '+esc(e.message)+'</span>';}
+  $('plFU').textContent='Send Follow-ups';$('plFU').disabled=false;
+};
+
+// MODAL
+function openM(){$('mO').classList.add('show');}
+function closeM(){$('mO').classList.remove('show');}
+$('mO').onclick=function(e){if(e.target===$('mO'))closeM();};
+
+// INIT
+var sv=localStorage.getItem('agri_user');if(sv){U=sv;showApp();}
+})();
+</script>
+</body>
+</html>
