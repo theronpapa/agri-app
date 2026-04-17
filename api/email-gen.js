@@ -79,12 +79,34 @@ Respond in this exact JSON format:
 
   let parsed;
   try {
-    parsed = JSON.parse(text);
+    // Fix control characters inside JSON strings (newlines, tabs etc)
+    const cleaned = text.replace(/[\x00-\x1f]/g, (c) => {
+      if (c === '\n') return '\\n';
+      if (c === '\r') return '\\r';
+      if (c === '\t') return '\\t';
+      return '';
+    });
+    parsed = JSON.parse(cleaned);
   } catch {
     const match = text.match(/\{[\s\S]*"subject"[\s\S]*"body"[\s\S]*\}/);
-    if (match) parsed = JSON.parse(match[0]);
-    else parsed = { subject: `Exhibitor Invitation: ${EVENT.name} — ${Company}`, body: text };
+    if (match) {
+      try {
+        const cleaned = match[0].replace(/[\x00-\x1f]/g, (c) => {
+          if (c === '\n') return '\\n';
+          if (c === '\r') return '\\r';
+          if (c === '\t') return '\\t';
+          return '';
+        });
+        parsed = JSON.parse(cleaned);
+      } catch {
+        parsed = { subject: `Exhibitor Invitation: ${EVENT.name} — ${Company}`, body: text };
+      }
+    } else {
+      parsed = { subject: `Exhibitor Invitation: ${EVENT.name} — ${Company}`, body: text };
+    }
   }
+  // Convert escaped newlines back to real newlines in body
+  if (parsed.body) parsed.body = parsed.body.replace(/\\n/g, '\n');
 
   return {
     to: Email,
