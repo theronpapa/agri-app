@@ -339,7 +339,8 @@ function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent
 // API helpers
 async function api(path,opts){
   var r=await fetch(path,opts);
-  return r.json();
+  var txt=await r.text();
+  try{return JSON.parse(txt);}catch(e){throw new Error(txt.slice(0,200));}
 }
 async function getTab(tab){return api('/api/sheets?tab='+tab);}
 async function postSheet(body){return api('/api/sheets?user='+encodeURIComponent(U),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});}
@@ -549,29 +550,42 @@ async function checkAI(){
   }catch(e){$('aiStatus').textContent='Could not check AI status';}
 }
 
-// Generate AI emails
+// Generate AI emails — in batches of 10 to avoid Vercel timeout
 $('emGen').onclick=async function(){
   if(emSel.size===0){alert('Select at least one contact first.');return;}
   var sel=cData.filter(function(c){return emSel.has(c.ID);});
   if(aiReady&&sel.length>10){
     if(!confirm('Generate AI emails for '+sel.length+' contacts?\n\nThis will use your Anthropic API credits (~$0.001 per email).\n\nFor '+sel.length+' emails, cost is roughly $'+((sel.length*0.001).toFixed(2))))return;
   }
-  $('emGen').textContent=aiReady?'AI generating '+sel.length+' emails...':'Generating '+sel.length+' emails...';
   $('emGen').disabled=true;
-  try{
-    var r=await api('/api/email-gen?action=generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacts:sel})});
-    genEmails=r.emails||[];
-    renderPreviews();
-    if(r.ai){
-      $('emGen').textContent='Generate AI Emails (Haiku 4.5)';
-    }else{
-      $('emGen').textContent='Generate Emails (Template)';
+  genEmails=[];
+  var allErrors=[];
+  var BATCH=10;
+  var total=sel.length;
+
+  for(var i=0;i<total;i+=BATCH){
+    var batch=sel.slice(i,i+BATCH);
+    var done=Math.min(i+BATCH,total);
+    $('emGen').textContent=(aiReady?'AI generating':'Generating')+' '+done+'/'+total+' emails...';
+    try{
+      var r=await api('/api/email-gen?action=generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contacts:batch})});
+      genEmails=genEmails.concat(r.emails||[]);
+      if(r.errors)allErrors=allErrors.concat(r.errors);
+      renderPreviews();
+    }catch(e){
+      allErrors.push({company:'Batch '+(Math.floor(i/BATCH)+1),error:e.message});
+      batch.forEach(function(c){
+        genEmails.push({to:c.Email,subject:'Exhibitor Invitation: AgriMalaysia 2026',body:'[Template fallback — AI generation failed for this batch]',company:c.Company,name:c.Name,category:c.Category});
+      });
+      renderPreviews();
     }
-    if(r.errors&&r.errors.length){
-      alert(r.errors.length+' emails fell back to template due to errors:\n'+r.errors.map(function(e){return e.company+': '+e.error;}).join('\n'));
-    }
-  }catch(e){alert('Error generating: '+e.message);$('emGen').textContent=aiReady?'Generate AI Emails (Haiku 4.5)':'Generate Emails (Template)';}
+  }
+
+  $('emGen').textContent=aiReady?'Generate AI Emails (Haiku 4.5)':'Generate Emails (Template)';
   $('emGen').disabled=false;
+  if(allErrors.length){
+    alert(allErrors.length+' errors during generation:\n'+allErrors.map(function(e){return e.company+': '+e.error;}).join('\n'));
+  }
 };
 
 function renderPreviews(){
